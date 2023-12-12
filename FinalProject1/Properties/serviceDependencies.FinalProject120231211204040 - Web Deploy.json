@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "mssql1": {
+      "serviceConnectorResourceId": "/subscriptions/[parameters('subscriptionId')]/resourcegroups/[parameters('resourceGroupName')]/providers/Microsoft.Web/sites/FinalProject120231211204040/providers/Microsoft.ServiceLinker/linkers/ConnectionStringsAppDb_03C09D3296",
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourcegroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/finalproject1dbserver/databases/FinalProject1_db",
+      "type": "mssql.azure",
+      "connectionId": "ConnectionStrings:AppDb"
+    }
+  }
+}
