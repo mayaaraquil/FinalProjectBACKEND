@@ -1,4 +1,6 @@
-﻿namespace FinalProject1.Models
+﻿
+
+namespace FinalProject1.Models
 {
     public class Comments: BaseEntity
     {
@@ -6,6 +8,6 @@
         public string CommentText { get; set; }
         public int UserId { get; set; }
         public Posts PostType { get; set; }
-        public int PostId { get; set; }
+        public int PostId { get; set; }//comes from the id for the PostType
     }
 }
