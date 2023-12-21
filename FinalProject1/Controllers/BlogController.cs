@@ -14,14 +14,14 @@ namespace FinalProject1.Controllers
             _appDbContext= appDbContext;
         }
         [HttpGet("/blogs")]
-        public IActionResult GetAllBlogs()
+        public async Task<IActionResult> GetAllBlogs()
         {
-            return Ok(_appDbContext.BlogPost.ToList());
+            return Ok(await _appDbContext.BlogPost.ToListAsync());
         }
         [HttpGet ("/blogs/{id}")]
-        public IActionResult GetBlogsByUserId(int userId)
+        public async Task<IActionResult> GetBlogsByUserId(int userId)
         {
-            var BlogPosts = _appDbContext.BlogPost.Where(x => x.UserId == userId);
+            var BlogPosts = await _appDbContext.BlogPost.ToListAsync(x => x.UserId == userId);
             if (BlogPosts == null)
             {
                 return NotFound();
@@ -29,35 +29,33 @@ namespace FinalProject1.Controllers
             return Ok(BlogPosts);
         }
         [HttpPost("/blogs")]
-        public IActionResult CreateBlogPost([FromBody]BlogPost blogPost)
+        public async Task<IActionResult> CreateBlogPost([FromBody]BlogPost blogPost)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            _appDbContext.BlogPost.Add(blogPost);
-            var blogPostId = _appDbContext.SaveChanges();
-            blogPost.BlogId= blogPostId;
-            blogPost.CreatedDate = DateTime.Now;
-            blogPost.isActive = true;
-            return Ok(blogPost);
+            _appDbContext.BlogPosts.Add(blogPost);
+            await _appDbContext.SaveChangesAsync();
+            return Ok(); 
+
         }
         [HttpDelete("/blogs/{id}")]
-        public IActionResult DeletBlogPost(int blogPostId)
+        public async Task<IActionResult> DeletBlogPost(int blogPostId)
         {
-            var blogPost = _appDbContext.BlogPost.Where(x=> x.BlogId == blogPostId).FirstOrDefault();
+            var blogPost =await _appDbContext.BlogPost.FirstOrDefaultAsync(x => x.BlogId == blogPostId);
             if (blogPost == null)
             {
                 return NotFound();
             }
-            blogPost.IsActive = false;
-            blogPost.UpdatedDate = DateTime.Now;
+            _appDbContext.BlogPosts.Remove(blogPost);
+            await _appDbContext.SaveChangesAsync();
             return NoContent();
         }
         [HttpPut("/blogs/{id}")]
-        public IActionResult UpdateBlogPost([FromBody] BlogPost newBlogPost, int blogPostId)
+        public async Task<IActionResult> UpdateBlogPost([FromBody] BlogPost newBlogPost, int blogPostId)
         {
-            var blogPost = _appDbContext.BlogPost.Where(x => x.BlogId == blogPostId).FIrstOrDefault();
+            var blogPost = await _appDbContext.BlogPost.FirstOrDefaultAsync(x => x.BlogId == blogPostId);
             if (blogPost == null)
             {
                 return NotFound();
@@ -65,6 +63,7 @@ namespace FinalProject1.Controllers
             blogPost.Title = newBlogPost.Title;
             blogPost.Content = newBlogPost.Content;
             blogPost.UpdatedDat= DateTime.Now;
+            await _appDbContext.SaveChangesAsync();
             return Ok(blogPost);
         }
     }
