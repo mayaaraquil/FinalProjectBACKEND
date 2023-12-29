@@ -1,10 +1,8 @@
 ﻿namespace FinalProject1.Models
 {
-    public enum Posts
+    public class Posts : BaseEntity
     {
-        Blog,
-        Playlist,
-        Song,
-        Video
+        public int PostId { get; set; }
+        public PostTypes PostType { get; set; }
     }
 }

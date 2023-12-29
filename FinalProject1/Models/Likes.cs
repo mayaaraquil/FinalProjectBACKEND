@@ -5,7 +5,7 @@
         public int LikeId { get; set; }
         public int UserId { get; set; }
         public int LikedItemId { get; set; }
-        public Posts Posts { get; set; }
+        public PostTypes Posts { get; set; }
 
     }
 }

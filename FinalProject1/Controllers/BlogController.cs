@@ -1,6 +1,8 @@
-﻿using FinalProject1.Models;
+﻿
+using FinalProject1.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace FinalProject1.Controllers
 {
@@ -21,7 +23,7 @@ namespace FinalProject1.Controllers
         [HttpGet ("/blogs/{id}")]
         public async Task<IActionResult> GetBlogsByUserId(int userId)
         {
-            var BlogPosts = await _appDbContext.BlogPost.ToListAsync(x => x.UserId == userId);
+            var BlogPosts = await _appDbContext.BlogPost.FirstOrDefaultAsync(x => x.UserId == userId);
             if (BlogPosts == null)
             {
                 return NotFound();
@@ -35,7 +37,7 @@ namespace FinalProject1.Controllers
             {
                 return BadRequest(ModelState);
             }
-            _appDbContext.BlogPosts.Add(blogPost);
+            _appDbContext.BlogPost.Add(blogPost);
             await _appDbContext.SaveChangesAsync();
             return Ok(); 
 
@@ -48,7 +50,7 @@ namespace FinalProject1.Controllers
             {
                 return NotFound();
             }
-            _appDbContext.BlogPosts.Remove(blogPost);
+            _appDbContext.BlogPost.Remove(blogPost);
             await _appDbContext.SaveChangesAsync();
             return NoContent();
         }
@@ -62,9 +64,10 @@ namespace FinalProject1.Controllers
             }
             blogPost.Title = newBlogPost.Title;
             blogPost.Content = newBlogPost.Content;
-            blogPost.UpdatedDat= DateTime.Now;
+            blogPost.UpdatedDate= DateTime.Now;
             await _appDbContext.SaveChangesAsync();
             return Ok(blogPost);
         }
     }
 }
+

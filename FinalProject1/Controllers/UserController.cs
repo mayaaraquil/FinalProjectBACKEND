@@ -42,6 +42,8 @@ namespace FinalProject1.Controllers
                 return BadRequest(ModelState);
             }
 
+          
+
             _appdbContext.Users.Add(user);
             await _appdbContext.SaveChangesAsync();
             return Ok(user);
