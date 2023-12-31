@@ -38,25 +38,25 @@ namespace FinalProject1.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> GetCommentBySearch(int? author, PostTypes? postType, int? postId)
+        public async Task<IActionResult> GetCommentBySearch( SearchTerms searchTerms)
         {
             //initialize to build a query dynamically
             IQueryable<Comments> query = _appDbContext.Comments.AsQueryable();
 
             //filter author
-            if (author.HasValue)
+            if (searchTerms.author.HasValue)
             {
-                query = query.Where(x => x.UserId == author);
+                query = query.Where(x => x.UserId == searchTerms.author);
             }
 
             //filter post type
-            if (postType.HasValue)
+            if (searchTerms.postType.HasValue)
             {
-                query = query.Where(x => x.PostType == postType);
+                query = query.Where(x => x.PostType == searchTerms.postType);
             }
 
             //filter post id 
-            if (postId.HasValue)
+            if (searchTerms.EqualspostId.HasValue)
             {
                 if (postType.HasValue)
                 {
