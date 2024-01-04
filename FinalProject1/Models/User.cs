@@ -1,11 +1,14 @@
-﻿namespace FinalProject1.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace FinalProject1.Models
 {
-    public class User: BaseEntity
+    public class EndUser: BaseEntity
     {
-        public int UserId { get; set; }
-        public string AuthName { get; set; }
-        public string Username { get; set; }
-        public string ProfilePicture { get; set; }
-        public string Bio { get; set; }
+        [Key]
+        public int userId { get; set; }
+        public string authName { get; set; }
+        public string username { get; set; }
+        public string profilePicture { get; set; }
+        public string bio { get; set; }
     }
 }

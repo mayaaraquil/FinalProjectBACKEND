@@ -36,18 +36,18 @@ namespace FinalProject1.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> GetReplyBySearch(int? author, int? parentId)
+        public async Task<IActionResult> GetReplyBySearch(ReplySearch replySearch)
         {
             IQueryable<Reply> query = _appDbContext.Replies.AsQueryable();
 
-            if (author.HasValue)
+            if (replySearch.author.HasValue)
             {
-                query = query.Where(x => x.AuthorId == author.Value);
+                query = query.Where(x => x.AuthorId == replySearch.author.Value);
             }
 
-            if (parentId.HasValue)
+            if (replySearch.parentId.HasValue)
             {
-                query = query.Where(x => x.ParentCommentId == parentId.Value);
+                query = query.Where(x => x.ParentCommentId == replySearch.parentId.Value);
             }
 
             var replies = await query.ToListAsync();

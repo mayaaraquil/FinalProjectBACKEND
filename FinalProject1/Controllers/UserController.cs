@@ -25,7 +25,7 @@ namespace FinalProject1.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUserByIdAsync(int id)
         {
-            var user = await _appdbContext.Users.FirstOrDefaultAsync(x => x.UserId == id);
+            var user = await _appdbContext.Users.FirstOrDefaultAsync(x => x.userId == id);
 
             if(user == null)
             {
@@ -35,7 +35,7 @@ namespace FinalProject1.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateUser([FromBody] User user)
+        public async Task<IActionResult> CreateUser([FromBody] EndUser user)
         {
             if(!ModelState.IsValid)
             {
@@ -43,6 +43,9 @@ namespace FinalProject1.Controllers
             }
 
           
+            user.CreatedDate = DateTime.Now;
+            user.UpdatedDate = DateTime.Now;
+            user.isActive = true;
 
             _appdbContext.Users.Add(user);
             await _appdbContext.SaveChangesAsync();
@@ -50,27 +53,28 @@ namespace FinalProject1.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser([FromBody] User user, int id)
+        public async Task<IActionResult> UpdateUser([FromBody] EndUser user, int id)
         {
-            var originalUser = await _appdbContext.Users.FirstOrDefaultAsync(x => x.UserId == id);
+            var originalUser = await _appdbContext.Users.FirstOrDefaultAsync(x => x.userId == id);
 
             if(originalUser == null)
             {
                 return NotFound();
             }
 
-            originalUser.Username = user.Username;
-            originalUser.ProfilePicture = user.ProfilePicture;
-            originalUser.Bio = user.Bio;
+            originalUser.username = user.username;
+            originalUser.profilePicture = user.profilePicture;
+            originalUser.bio = user.bio;
+            originalUser.UpdatedDate = DateTime.Now;
 
             await _appdbContext.SaveChangesAsync();
-            return Ok(user);
+            return Ok(originalUser);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            var user = await _appdbContext.Users.FirstOrDefaultAsync(x =>x.UserId == id);
+            var user = await _appdbContext.Users.FirstOrDefaultAsync(x =>x.userId == id);
             if(user == null)
             {
                 return NotFound();

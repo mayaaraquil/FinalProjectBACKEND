@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace FinalProject1.Migrations
 {
-    public partial class commentsandreplies : Migration
+    public partial class initialtestingtake2 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -50,6 +50,23 @@ namespace FinalProject1.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Playlists",
+                columns: table => new
+                {
+                    PlaylistId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SpotifyPlaylistId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PlaylistName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    isActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Playlists", x => x.PlaylistId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Replies",
                 columns: table => new
                 {
@@ -63,6 +80,25 @@ namespace FinalProject1.Migrations
                 {
                     table.PrimaryKey("PK_Replies", x => x.ReplyId);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    userId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    authName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    username = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    profilePicture = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    bio = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    isActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.userId);
+                });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -74,7 +110,13 @@ namespace FinalProject1.Migrations
                 name: "Comments");
 
             migrationBuilder.DropTable(
+                name: "Playlists");
+
+            migrationBuilder.DropTable(
                 name: "Replies");
+
+            migrationBuilder.DropTable(
+                name: "Users");
         }
     }
 }
