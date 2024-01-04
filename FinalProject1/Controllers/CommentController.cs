@@ -38,43 +38,43 @@ namespace FinalProject1.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> GetCommentBySearch(int? author, PostTypes? postType, int? postId)
+        public async Task<IActionResult> GetCommentBySearch( SearchTerms searchTerms)
         {
             //initialize to build a query dynamically
             IQueryable<Comments> query = _appDbContext.Comments.AsQueryable();
 
             //filter author
-            if (author.HasValue)
+            if (searchTerms.author.HasValue)
             {
-                query = query.Where(x => x.UserId == author);
+                query = query.Where(x => x.UserId == searchTerms.author);
             }
 
             //filter post type
-            if (postType.HasValue)
+            if (searchTerms.postType.HasValue)
             {
-                query = query.Where(x => x.PostType == postType);
+                query = query.Where(x => x.PostType == searchTerms.postType);
             }
 
             //filter post id 
-            if (postId.HasValue)
+            if (searchTerms.postId.HasValue)
             {
-                if (postType.HasValue)
+                if (searchTerms.postType.HasValue)
                 {
-                    if (postType == PostTypes.Blog)
+                    if (searchTerms.postType == PostTypes.Blog)
                     {
-                        query = query.Where(x => x.BlogId == postId);
+                        query = query.Where(x => x.BlogId == searchTerms.postId);
                     }
-                    else if (postType == PostTypes.Playlist)
+                    else if (searchTerms.postType == PostTypes.Playlist)
                     {
-                        query = query.Where(x => x.PlaylistId == postId);
+                        query = query.Where(x => x.PlaylistId == searchTerms.postId);
                     }
-                    else if (postType == PostTypes.Song)
+                    else if (searchTerms.postType == PostTypes.Song)
                     {
-                        query = query.Where(x => x.SongId == postId);
+                        query = query.Where(x => x.SongId == searchTerms.postId);
                     }
-                    else if(postType == PostTypes.Video)
+                    else if(searchTerms.postType == PostTypes.Video)
                     {
-                        query = query.Where(x => x.VideoId == postId);
+                        query = query.Where(x => x.VideoId == searchTerms.postId);
                     }
                     
                 }
