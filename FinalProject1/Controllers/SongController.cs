@@ -1,5 +1,6 @@
 ﻿using FinalProject1.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace FinalProject1.Controllers
 {
@@ -7,18 +8,24 @@ namespace FinalProject1.Controllers
     [ApiController]
     public class SongController : Controller
     {
-        private readonly List<Song> _songs = new List<Song>();
+        private readonly AppDbContext _context;
+
+        public SongController(AppDbContext context)
+        {
+            _context = context;
+        }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Song>> GetSongs()
+        public async Task<ActionResult<IEnumerable<Song>>> GetSongs()
         {
-            return _songs;
+            return await _context.Songs.ToListAsync();
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Song> GetSongById(int id)
+        public async Task<ActionResult<Song>> GetSongById(int id)
         {
-            var song = _songs.FirstOrDefault(s => s.SongId == id);
+            var song = await _context.Songs.FindAsync(id);
+
             if (song == null)
             {
                 return NotFound();
@@ -27,34 +34,60 @@ namespace FinalProject1.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Song> CreateSong(Song song)
+        public async Task<ActionResult<Song>> CreateSong(Song song)
         {
-            _songs.Add(song);
+            _context.Songs.Add(song);
+            await _context.SaveChangesAsync();
+
             return CreatedAtAction(nameof(GetSongById), new { id = song.SongId }, song);
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateSong(int id, Song song)
+        public async Task<IActionResult> UpdateSong(int id, Song song)
         {
-            var existingSong = _songs.FirstOrDefault(s => s.SongId == id);
-            if (existingSong == null)
+            if (id != song.SongId)
             {
-                return NotFound();
+                return BadRequest();
             }
-            existingSong.SpotifySongId = song.SpotifySongId;
+
+            _context.Entry(song).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!SongExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
             return NoContent();
-        }
+        }  
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteSong(int id)
+        public async Task<IActionResult> DeleteSong(int id)
         {
-            var song = _songs.FirstOrDefault(s => s.SongId == id);
+            var song = await _context.Songs.FindAsync(id);
             if (song == null)
             {
                 return NotFound();
             }
-            _songs.Remove(song);
+            _context.Songs.Remove(song);
+            await _context.SaveChangesAsync();
+
             return NoContent();
+        }
+
+        private bool SongExists(int id)
+        {
+            return _context.Songs.Any(e => e.SongId == id);
         }
 
     }
