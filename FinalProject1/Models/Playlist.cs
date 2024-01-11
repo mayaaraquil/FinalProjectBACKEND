@@ -3,9 +3,8 @@
     public class Playlist: BaseEntity
     {
         public int PlaylistId { get; set; }
+        public int UserId { get; set; }
         public string SpotifyPlaylistId { get; set; }
-
-        public string PlaylistName { get; set;}
         //enum 2
     }
 }

@@ -20,7 +20,7 @@ namespace FinalProject1.Controllers
         {
             return Ok(await _appDbContext.BlogPost.ToListAsync());
         }
-        [HttpGet ("/blogs/{id}")]
+        [HttpGet ("/blogs/user/{id}")]
         public async Task<IActionResult> GetBlogsByUserId(int userId)
         {
             var BlogPosts = await _appDbContext.BlogPost.FirstOrDefaultAsync(x => x.UserId == userId);
@@ -30,6 +30,7 @@ namespace FinalProject1.Controllers
             }
             return Ok(BlogPosts);
         }
+        [HttpGet("/blogs/{id}")]
         [HttpPost("/blogs")]
         public async Task<IActionResult> CreateBlogPost([FromBody]BlogPost blogPost)
         {
