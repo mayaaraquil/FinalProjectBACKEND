@@ -1,6 +1,7 @@
 ﻿using FinalProject1.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace FinalProject1.Controllers
 {
@@ -8,18 +9,24 @@ namespace FinalProject1.Controllers
     [ApiController]
     public class LikesController : Controller
     {
-        private readonly List<Likes> _likes = new List<Likes>();
+        private readonly AppDbContext _context;
+
+        public LikesController(AppDbContext context)
+        {
+            _context = context;
+        }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Likes>> GetLikes()
+        public async Task<ActionResult<IEnumerable<Likes>>> GetLikes()
         {
-            return _likes;
+            return await _context.Likes.ToListAsync();
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Likes> GetLikesById(int id)
+        public async Task<ActionResult<Likes>> GetLikesById(int id)
         {
-            var likes = _likes.FirstOrDefault(l => l.LikeId == id);
+            var likes = await _context.Likes.FindAsync(id);
+
             if (likes == null)
             {
                 return NotFound();
@@ -28,39 +35,60 @@ namespace FinalProject1.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Likes> CreateLikes(Likes likes)
+        public async Task<ActionResult<Likes>> CreateLikes(Likes likes)
         {
-            _likes.Add(likes);
+            _context.Likes.Add(likes);
+            await _context.SaveChangesAsync();
+
             return CreatedAtAction(nameof(GetLikesById), new {id = likes.LikeId }, likes);
         }
 
-        [HttpPut]
-        public IActionResult UpdateLike(int id, Likes likes)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateLike(int id, Likes likes)
         {
-            var existingLike = _likes.FirstOrDefault(l => l.LikeId == id);
-            if (existingLike == null)
+            if (id != likes.LikeId)
             {
-                return NotFound();
+                return BadRequest();
             }
 
-            existingLike.UserId = likes.UserId;
-            existingLike.LikedItemId = likes.LikedItemId;
-            existingLike.Posts = likes.Posts;
+            _context.Entry(likes).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!LikesExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
             return NoContent();
         }
 
+
         [HttpDelete("{id}")]
-        public IActionResult DeleteLike(int id)
+        public async Task<IActionResult> DeleteLike(int id)
         {
-            var like = _likes.FirstOrDefault(l => l.LikeId == id);
+            var like = await _context.Likes.FindAsync(id);
             if (like == null)
             {
                 return NotFound();
             }
 
-            _likes.Remove(like);
+            _context.Likes.Remove(like);
             return NoContent();
+        }
+
+        private bool LikesExists(int id)
+        {
+            return _context.Likes.Any(e => e.LikeId == id);
         }
     }
 }
