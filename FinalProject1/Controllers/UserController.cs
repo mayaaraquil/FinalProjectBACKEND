@@ -7,7 +7,7 @@ namespace FinalProject1.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserController : BaseController
     {
         private readonly AppDbContext _appdbContext;
 
@@ -19,6 +19,7 @@ namespace FinalProject1.Controllers
         [HttpGet]
         public async Task<IActionResult> GetUsersAsync()
         {
+            var blah = GetUserId();
             return Ok(await _appdbContext.Users.ToListAsync());
         }
 

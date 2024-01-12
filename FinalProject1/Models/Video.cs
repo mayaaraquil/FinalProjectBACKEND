@@ -9,5 +9,6 @@ namespace FinalProject1.Models
         public int UserId {  get; set; }
         public string VideosUrl { get; set; }
         //enum 4
+        public int UserId { get; set; }
     }
 }
