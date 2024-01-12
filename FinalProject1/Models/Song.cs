@@ -5,5 +5,6 @@
         public int SongId { get; set; }
         public string SpotifySongId { get; set; }
         //enum 3
+        public string authId { get; set; }
     }
 }
