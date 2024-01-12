@@ -9,8 +9,7 @@ namespace FinalProject1.Models
         public int BlogId { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
-        [ForeignKey("UserId")]
-        public int UserId { get; set; }
+        public string AuthZeroUserId { get; set; }
         //enum 1
     }
 }

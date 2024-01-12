@@ -6,7 +6,7 @@ namespace FinalProject1.Models
     {
         [Key]
         public int userId { get; set; }
-        public string authName { get; set; }
+        public string authZeroId { get; set; }
         public string username { get; set; }
         public string profilePicture { get; set; }
         public string bio { get; set; }

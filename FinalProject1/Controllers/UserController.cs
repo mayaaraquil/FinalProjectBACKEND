@@ -10,7 +10,7 @@ namespace FinalProject1.Controllers
     public class UserController : BaseController
     {
         private readonly AppDbContext _appdbContext;
-
+        
         public UserController(AppDbContext appdbContext)
         {
             _appdbContext = appdbContext;
@@ -34,7 +34,16 @@ namespace FinalProject1.Controllers
             }
             return Ok(user);
         }
-
+        [HttpGet("{authName}")]
+        public async Task<IActionResult> GetUserByAuthName(string inputAuthName)
+        {
+            var user = await _appdbContext.Users.FirstOrDefaultAsync(x=> x.authName == inputAuthName);
+            if(user == null)
+            {
+                return NotFound();
+            }
+            return Ok(user);
+        }
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] EndUser user)
         {

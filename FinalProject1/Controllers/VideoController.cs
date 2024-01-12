@@ -1,9 +1,4 @@
-<<<<<<< HEAD
-﻿
-using FinalProject1.Models;
-=======
 ﻿using FinalProject1.Models;
->>>>>>> main
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -27,7 +22,7 @@ namespace FinalProject1.Controllers
         [HttpGet("/videos/{id}")]
         public async Task<IActionResult> GetVideosByUserIdAsync(int userId)
         {
-            var videos = await _appDbContext.Videos.Where(x => x.UserId == userId).FirstOrDefaultAsync(x => x.UserId == userId);
+            var videos = await _appDbContext.Videos.Where(x => x.UserId == userId).FirstOrDefaultAsync();
             if (videos == null)
             {
                 return NotFound();
