@@ -8,7 +8,7 @@ namespace FinalProject1.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ReplyController : ControllerBase
+    public class ReplyController : BaseController
     {
 
         private readonly AppDbContext _appDbContext;
@@ -19,12 +19,14 @@ namespace FinalProject1.Controllers
         [HttpGet]
         public async Task<IActionResult> GetRepliesAsync()
         {
+            var checking = GetUserId();
             return Ok(await _appDbContext.Replies.ToListAsync());
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetReplyByComment(int id)
         {
+            var checking = GetUserId();
             var reply = await _appDbContext.Replies.FirstOrDefaultAsync(x => x.ReplyId == id);
 
             if(reply == null)
@@ -38,11 +40,12 @@ namespace FinalProject1.Controllers
         [HttpGet("search")]
         public async Task<IActionResult> GetReplyBySearch(ReplySearch replySearch)
         {
+            var checking = GetUserId();
             IQueryable<Reply> query = _appDbContext.Replies.AsQueryable();
 
-            if (replySearch.author.HasValue)
+            if (replySearch.author != "")
             {
-                query = query.Where(x => x.AuthorId == replySearch.author.Value);
+                query = query.Where(x => x.AuthorId == replySearch.author);
             }
 
             if (replySearch.parentId.HasValue)
@@ -67,7 +70,9 @@ namespace FinalProject1.Controllers
             {
                 return BadRequest(ModelState);
             }
+            var author = GetUserId();
 
+            reply.AuthorId = author;
             _appDbContext.Replies.Add(reply);
             await _appDbContext.SaveChangesAsync();
             return Ok(reply);
@@ -76,6 +81,7 @@ namespace FinalProject1.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateReply([FromBody] Reply replies, int id)
         {
+            var checking = GetUserId();
             var dbReply = await _appDbContext.Replies.FirstOrDefaultAsync(x => x.ReplyId == id);
 
             if(dbReply == null)
@@ -91,6 +97,7 @@ namespace FinalProject1.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteReply(int id)
         {
+            var checking = GetUserId();
             var reply = await _appDbContext.Replies.FirstOrDefaultAsync(x => x.ReplyId == id);
 
             if(reply == null)

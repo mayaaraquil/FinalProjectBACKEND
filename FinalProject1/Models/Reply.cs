@@ -10,6 +10,6 @@ namespace FinalProject1.Models
         [ForeignKey("ParentCommentId")]
         public int ParentCommentId { get; set; }
         public string ReplyText { get; set; }
-        public int AuthorId { get; set; }
+        public string AuthorId { get; set; }
     }
 }

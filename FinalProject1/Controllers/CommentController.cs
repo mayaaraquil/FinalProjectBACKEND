@@ -8,7 +8,7 @@ namespace FinalProject1.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CommentController : ControllerBase
+    public class CommentController : BaseController
     {
      
 
@@ -22,12 +22,14 @@ namespace FinalProject1.Controllers
         [HttpGet]
         public async Task<IActionResult> GetCommentsAsync()
         {
+            var checking = GetUserId();
             return Ok(await _appDbContext.Comments.ToListAsync());
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCommentById(int id)
         {
+            var checking = GetUserId();
             var comment = await _appDbContext.Comments.FirstOrDefaultAsync(x => x.CommentId == id);
 
             if (comment == null)
@@ -41,13 +43,14 @@ namespace FinalProject1.Controllers
         [HttpGet("search")]
         public async Task<IActionResult> GetCommentBySearch( SearchTerms searchTerms)
         {
+            var checking = GetUserId();
             //initialize to build a query dynamically
             IQueryable<Comments> query = _appDbContext.Comments.AsQueryable();
 
             //filter author
-            if (searchTerms.author.HasValue)
+            if (searchTerms.author != "")
             {
-                query = query.Where(x => x.UserId == searchTerms.author);
+                query = query.Where(x => x.AuthId == searchTerms.author);
             }
 
             //filter post type
@@ -104,8 +107,9 @@ namespace FinalProject1.Controllers
                 return BadRequest(ModelState);
             }
 
-       
+            var author = GetUserId();
 
+            comment.AuthId = author;
             _appDbContext.Comments.Add(comment);
             await _appDbContext.SaveChangesAsync();
             return Ok(comment);
@@ -114,6 +118,7 @@ namespace FinalProject1.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateComment([FromBody] Comments comment, int id)
         {
+            var checking = GetUserId();
             var dbcomment = await _appDbContext.Comments.FirstOrDefaultAsync(x => x.CommentId == id);
 
             if (dbcomment == null)
@@ -129,6 +134,7 @@ namespace FinalProject1.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteComment(int id)
         {
+            var checking = GetUserId();
             var comment = await _appDbContext.Comments.FirstOrDefaultAsync(x => x.CommentId == id);
 
             if (comment == null)
