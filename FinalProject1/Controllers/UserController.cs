@@ -26,7 +26,7 @@ namespace FinalProject1.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUserByIdAsync(int id)
         {
-            var checking = GetUserId();
+            //var checking = GetUserId();
             var user = await _appdbContext.Users.FirstOrDefaultAsync(x => x.userId == id);
 
             if(user == null)
@@ -44,7 +44,7 @@ namespace FinalProject1.Controllers
             {
                 return BadRequest();
             }
-            var user = await _appdbContext.Users.FirstOrDefaultAsync(x=> x.authZeroId == inputAuthName);
+            var user = await _appdbContext.Users.FirstOrDefaultAsync(x=> x.authName == inputAuthName);
             if(user == null)
             {
                 return NotFound();
@@ -64,7 +64,7 @@ namespace FinalProject1.Controllers
             user.UpdatedDate = DateTime.Now;
             user.isActive = true;
 
-            user.authZeroId = authid;
+            user.authName = authid;
             _appdbContext.Users.Add(user);
             await _appdbContext.SaveChangesAsync();
             return Ok(user);

@@ -19,6 +19,7 @@ namespace FinalProject1.Controllers
         public async Task<IActionResult> GetSongs()
         {
             var userId = GetUserId();
+            Console.WriteLine(userId);
             var songs = await _context.Songs.ToListAsync();
             var filteredSongs = songs.Where(x => x.authId == userId);
             return Ok(filteredSongs);
