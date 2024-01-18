@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FinalProject1.Models
@@ -7,9 +8,11 @@ namespace FinalProject1.Models
     { 
         [Key]
         public int BlogId { get; set; }
-        public string Title { get; set; }
-        public string Content { get; set; }
-        public string AuthZeroUserId { get; set; }
+        [JsonProperty("blogTitle")]
+        public string BlogTitle { get; set; }
+        [JsonProperty("blogContent")]
+        public string BlogContent { get; set; }
+        public string UserId { get; set; }
         //enum 1
     }
 }
