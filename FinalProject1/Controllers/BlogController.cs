@@ -11,21 +11,19 @@ namespace FinalProject1.Controllers
     public class BlogController : BaseController
     {
         private readonly AppDbContext _appDbContext;
-        private readonly UserController _userController;
-        public BlogController(AppDbContext appDbContext, UserController userController) 
+        public BlogController(AppDbContext appDbContext) 
         {
             _appDbContext= appDbContext;
-            _userController= userController;
         }
-        [HttpGet("/blogs")]
+        [HttpGet]
         public async Task<IActionResult> GetAllBlogs()
         {
             return Ok(await _appDbContext.BlogPost.ToListAsync());
         }
-        [HttpGet ("/blogs/user/{id}")]
+        [HttpGet ("{id}")]
         public async Task<IActionResult> GetBlogsByUserId(string authZeroUserId)
         {
-            var BlogPosts = await _appDbContext.BlogPost.FirstOrDefaultAsync(x => x.AuthZeroUserId == authZeroUserId);
+            var BlogPosts = await _appDbContext.BlogPost.FirstOrDefaultAsync(x => x.UserId == authZeroUserId);
             if (BlogPosts == null)
             {
                 return NotFound();
@@ -33,26 +31,29 @@ namespace FinalProject1.Controllers
             return Ok(BlogPosts);
         }
         
-        [HttpPost("/blogs")]
-        public async Task<IActionResult> CreateBlogPost([FromBody]BlogPostCreationDto blogPostDto)
+        [HttpPost]
+        public async Task<IActionResult> CreateBlogPost([FromBody]BlogPost blogPostDto)
         {
-            try
+           if(!ModelState.IsValid)
             {
-                
-                var newBlogPost = new BlogPost
-                {
-                    Title = blogPostDto.Title,
-                    Content = blogPostDto.Content,
-                    AuthZeroUserId = GetUserId()
-                };
-                return Ok("Blog post created successfully");
+                return BadRequest(ModelState);
             }
-            catch (Exception ex)
-            {
-                return BadRequest($"Failed to create blog post: {ex.Message}");
-            }
+
+            var blog = new BlogPost();
+            blog.BlogTitle = blogPostDto.BlogTitle;
+            blog.BlogContent = blogPostDto.BlogContent;
+            blog.CreatedDate = DateTime.Now;
+            blog.UpdatedDate = DateTime.Now;
+            blog.isActive = true;
+            blog.UserId = GetUserId();
+
+            _appDbContext.BlogPost.Add(blog);
+            await _appDbContext.SaveChangesAsync();
+            return Ok(blog);
+
+           
         }
-        [HttpDelete("/blogs/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeletBlogPost(int blogPostId)
         {
             var blogPost =await _appDbContext.BlogPost.FirstOrDefaultAsync(x => x.BlogId == blogPostId);
@@ -64,7 +65,7 @@ namespace FinalProject1.Controllers
             await _appDbContext.SaveChangesAsync();
             return NoContent();
         }
-        [HttpPut("/blogs/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdateBlogPost([FromBody] BlogPost newBlogPost, int blogPostId)
         {
             var blogPost = await _appDbContext.BlogPost.FirstOrDefaultAsync(x => x.BlogId == blogPostId);
@@ -72,8 +73,8 @@ namespace FinalProject1.Controllers
             {
                 return NotFound();
             }
-            blogPost.Title = newBlogPost.Title;
-            blogPost.Content = newBlogPost.Content;
+            blogPost.BlogContent = newBlogPost.BlogContent;
+            blogPost.BlogContent = newBlogPost.BlogContent;
             blogPost.UpdatedDate= DateTime.Now;
             await _appDbContext.SaveChangesAsync();
             return Ok(blogPost);

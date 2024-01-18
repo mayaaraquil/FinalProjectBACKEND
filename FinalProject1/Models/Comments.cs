@@ -11,7 +11,7 @@ namespace FinalProject1.Models
         [Key]
         public int CommentId { get; set; } //creates a comment id that is likely unique
         public string CommentText { get; set; }
-        public int UserId { get; set; } //refernces user table
+        public string AuthId { get; set; } //refernces user table
         public PostTypes PostType { get; set; } //tells what post type we are working with, song, video, etc
 
         //foreign keys to the PostTypes databases

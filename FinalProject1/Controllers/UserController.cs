@@ -26,6 +26,7 @@ namespace FinalProject1.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUserByIdAsync(int id)
         {
+            //var checking = GetUserId();
             var user = await _appdbContext.Users.FirstOrDefaultAsync(x => x.userId == id);
 
             if(user == null)
@@ -34,9 +35,15 @@ namespace FinalProject1.Controllers
             }
             return Ok(user);
         }
+
         [HttpGet("{authName}")]
         public async Task<IActionResult> GetUserByAuthName(string inputAuthName)
         {
+            var authid = GetUserId();
+            if(authid != inputAuthName)
+            {
+                return BadRequest();
+            }
             var user = await _appdbContext.Users.FirstOrDefaultAsync(x=> x.authName == inputAuthName);
             if(user == null)
             {
@@ -51,12 +58,13 @@ namespace FinalProject1.Controllers
             {
                 return BadRequest(ModelState);
             }
+            var authid = GetUserId();
 
-          
             user.CreatedDate = DateTime.Now;
             user.UpdatedDate = DateTime.Now;
             user.isActive = true;
 
+            user.authName = authid;
             _appdbContext.Users.Add(user);
             await _appdbContext.SaveChangesAsync();
             return Ok(user);
@@ -65,6 +73,7 @@ namespace FinalProject1.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser([FromBody] EndUser user, int id)
         {
+            var checking = GetUserId();
             var originalUser = await _appdbContext.Users.FirstOrDefaultAsync(x => x.userId == id);
 
             if(originalUser == null)
@@ -84,6 +93,7 @@ namespace FinalProject1.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
+            var checking = GetUserId();
             var user = await _appdbContext.Users.FirstOrDefaultAsync(x =>x.userId == id);
             if(user == null)
             {
